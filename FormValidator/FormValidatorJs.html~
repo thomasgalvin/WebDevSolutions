@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Form Validator - Vanilla Javascript</title>
+        
+        <style>
+            body {
+                text-align: justify;
+                font-family: verdana;
+                font-size: 0.9em;
+            }
+            
+            article {
+                max-width: 800px;
+            }
+            
+            form {
+                max-width: 700px;
+            }
+            
+            .field-group {
+                text-align: right;
+            }
+            
+            lable {
+                text-align: right;
+            }
+            
+            input {
+                width: 250px;
+            }
+            
+            .validation-error {
+                color: red;
+                visibility: hidden;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <section>
+            <article>
+                <form id="sign-up-form">
+                    <fieldset>
+                        <legend>Sign up for our newsletter!</legend>
+                        
+                        <p class="field-group">
+                            <lable class="foo" for="name">Name:</lable>
+                            <input id="name" placeholder="Your name"/>
+                            <span class="validation-error" id="validate-name">*</span>
+                        </p>
+                        
+                        <p class="field-group">
+                            <lable for="email">Email:</lable>
+                            <input id="email" placeholder="Your email address" />
+                            <span class="validation-error" id="validate-email">*</span>
+                        </p>
+                        
+                        <p class="field-group">
+                            <lable for="confirmEmail">Confirm email:</lable>
+                            <input id="confirm-email" placeholder="Confirm your email address" />
+                            <span class="validation-error" id="validate-confirm-email">*</span>
+                        </p>
+                        
+                        <p class="field-group">
+                            <lable for="spam">Yes! Fill my inbox with gigabytes of useless spam!</lable>
+                            <input id="spam" type="checkbox" checked />
+                            <span class="validation-error">*</span>
+                        </p>
+                        
+                        <p class="field-group small-print">
+                            <button id="sign-up-button">Sign me up!</button>
+                            <span class="validation-error">*</span>
+                        </p>
+                    </fieldset>
+                </form>
+                
+                <div id="congrats" style="display:none;">
+                    <h1>Congratulations <span id="congrats-name"></span>!</h1>
+                    
+                    <p>Our incredibly valuable content is on its way to your inbox
+                       as we speak!</p>
+                       
+                    <p id="congrats-spam" style="display:none;">And so is a ton
+                       of junk from our <strike>cohorts</strike> valued partners!</p>
+                       
+                    <p id="congrats-no-spam" style="display:none;">But are you 
+                       sure you don't want those special offers?</p>
+                </div>
+            </article>
+        </section>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+        
+        <script>
+            //anonymous function to bootstrap everything
+            (function() {
+                function validate() {
+                    var valid = true;
+                    
+                    var name = getName();
+                    valid = valid && name;
+                    showIfFalse( getValidateName(), name );
+                        
+                    var email = getEmail();
+                    valid = valid && email;
+                    showIfFalse( getValidateEmail(), email );
+                    
+                    var confirmEmail = getConfirmEmail();
+                    confirmEmail = confirmEmail && confirmEmail === email;
+                    valid = valid && confirmEmail;
+                    showIfFalse( getValidateConfirmEmail(), confirmEmail );
+                    
+                    return valid;
+                };
+                
+                function showIfFalse( element, expression ) {
+                    if( expression ) {
+                        element.style.visibility = "hidden";
+                    } else {
+                        element.style.visibility = "visible";
+                    }
+                }
+                
+                function submit() {
+                    if( validate() ) {
+                        doSubmit();
+                    }
+                  
+                    //prevent the form from submitting / reloading the page
+                    return false;
+                };
+                
+                function doSubmit() {
+                    getCongratsName().innerHTML = getName();
+                    
+                    if( getSpam() ) {
+                        getCongratsSpam().style.display = "";
+                    } else {
+                        getCongratsNoSpam().style.display = "";
+                    }
+                    
+                    getSignUpForm().style.display = "none";
+                    getCongrats().style.display = "";
+                };
+                
+                function getName(){ return document.getElementById("name").value; }
+                function getEmail(){ return document.getElementById("email").value; }
+                function getConfirmEmail(){ return document.getElementById("confirm-email").value; }
+                function getSpam(){ return document.getElementById("spam").checked; }
+                
+                function getValidateName() { return document.getElementById("validate-name"); };
+                function getValidateEmail() { return document.getElementById("validate-email"); };
+                function getValidateConfirmEmail() { return document.getElementById("validate-confirm-email"); };
+                
+                function getSignUpForm() { return document.getElementById("sign-up-form"); };
+                function getCongrats() { return document.getElementById("congrats"); };
+                function getCongratsName() { return document.getElementById("congrats-name"); };
+                function getCongratsSpam() { return document.getElementById("congrats-spam"); };
+                function getCongratsNoSpam() { return document.getElementById("congrats-no-spam"); };
+                
+                function getSignUpButton() { return document.getElementById("sign-up-button"); };
+                
+                getSignUpButton().onclick = submit;
+            })();//executing the anonymous function
+        </script>
+    </body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Form Validator - Object Literal Module</title>
+        
+        <style>
+            body {
+                text-align: justify;
+                font-family: verdana;
+                font-size: 0.9em;
+            }
+            
+            article {
+                max-width: 800px;
+            }
+            
+            form {
+                max-width: 700px;
+            }
+            
+            .field-group {
+                text-align: right;
+            }
+            
+            lable {
+                text-align: right;
+            }
+            
+            input {
+                width: 250px;
+            }
+            
+            .validation-error {
+                color: red;
+                visibility: hidden;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <section>
+            <article>
+                <form id="sign-up-form">
+                    <fieldset>
+                        <legend>Sign up for our newsletter!</legend>
+                        
+                        <p class="field-group">
+                            <lable class="foo" for="name">Name:</lable>
+                            <input id="name" placeholder="Your name"/>
+                            <span class="validation-error" id="validate-name">*</span>
+                        </p>
+                        
+                        <p class="field-group">
+                            <lable for="email">Email:</lable>
+                            <input id="email" placeholder="Your email address" />
+                            <span class="validation-error" id="validate-email">*</span>
+                        </p>
+                        
+                        <p class="field-group">
+                            <lable for="confirmEmail">Confirm email:</lable>
+                            <input id="confirm-email" placeholder="Confirm your email address" />
+                            <span class="validation-error" id="validate-confirm-email">*</span>
+                        </p>
+                        
+                        <p class="field-group">
+                            <lable for="spam">Yes! Fill my inbox with gigabytes of useless spam!</lable>
+                            <input id="spam" type="checkbox" checked />
+                            <span class="validation-error">*</span>
+                        </p>
+                        
+                        <p class="field-group small-print">
+                            <button id="sign-up-button">Sign me up!</button>
+                            <span class="validation-error">*</span>
+                        </p>
+                    </fieldset>
+                </form>
+                
+                <div id="congrats" style="display:none;">
+                    <h1>Congratulations <span id="congrats-name"></span>!</h1>
+                    
+                    <p>Our incredibly valuable content is on its way to your inbox
+                       as we speak!</p>
+                       
+                    <p id="congrats-spam" style="display:none;">And so is a ton
+                       of junk from our <strike>cohorts</strike> valued partners!</p>
+                       
+                    <p id="congrats-no-spam" style="display:none;">But are you 
+                       sure you don't want those special offers?</p>
+                </div>
+            </article>
+        </section>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+        
+        <script>
+            //anonymous function to bootstrap everything
+            (function() {
+                //DOM caching
+                $signUpForm = $('#sign-up-form');
+                
+                $name = $('#name');
+                $validateName = $('#validate-name');
+                
+                $email = $('#email');
+                $validateEmail = $('#validate-email');
+                
+                $confirmEmail = $('#confirm-email');
+                $validateConfirmEmail = $('#validate-confirm-email');
+                
+                $spam = $('#spam');
+                
+                $signUpButton = $('#sign-up-button');
+                
+                $congrats = $('#congrats');
+                $congratsName = $('#congrats-name');
+                $congratsSpam = $('#congrats-spam');
+                $congratsNoSpam = $('#congrats-no-spam');
+                
+                //event wiring
+                $signUpButton.click(submit);
+                
+                function validate( userInput ) {
+                    var valid = true;
+                    
+                    toggleVisibility( !userInput.name, $validateName );
+                    valid = valid && userInput.name;
+                    
+                    toggleVisibility( !userInput.email, $validateEmail );
+                    valid = valid && userInput.email;
+                    
+                    var confirmEmail = userInput.confirmEmail && userInput.confirmEmail === userInput.email;
+                    toggleVisibility( !confirmEmail, $validateConfirmEmail );
+                    valid = valid && confirmEmail;
+                    
+                    return valid;
+                }
+                
+                function submit() {
+                    var userInput = {
+                        name: $name.val(),
+                        email: $email.val(),
+                        confirmEmail: $confirmEmail.val(),
+                        spam: $spam.is(':checked')
+                    };
+                    
+                    if( validate( userInput ) ) {
+                        $congratsName.html( userInput.name );
+                        toggleDisplay( userInput.spam, $congratsSpam );
+                        toggleDisplay( !userInput.spam, $congratsNoSpam );
+                        
+                        $signUpForm.slideUp( 500 );
+                        $congrats.delay( 500 ).slideDown( 500 );
+                    }
+                    
+                    //prevnt the form from submitting via HTTP POST
+                    return false;
+                }
+                
+                function toggleVisibility( value, $element ) {
+                    if( value ){
+                        $element.css( { visibility: 'visible' } );
+                    } else {
+                        $element.css( { visibility: 'hidden' } );
+                    }
+                }
+                
+                function toggleDisplay( value, $element ) {
+                    if( value ){
+                        $element.css( { display: '' } );
+                    } else {
+                        $element.css( { display: 'none' } );
+                    }
+                }
+            })();//executing the anonymous function
+        </script>
+    </body>
+</html>
