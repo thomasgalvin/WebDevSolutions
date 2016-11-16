@@ -25,11 +25,6 @@
             <article>
                 <h1 id="header-display">
                     <span id="header-content">Lorem Ipsum</span> 
-                    <button type="button" id="header-edit-button">Edit</button>
-                </h1>
-                <h1 id="header-edit" style="display:none">
-                    <input id="header-input" />
-                    <button type="button" id="header-save-button">Done</button>
                 </h1>
                 
                 <div class="byline">Posted by 
@@ -78,57 +73,32 @@
         <script>
             //anonymous function to bootstrap everything
             (function() {
-                    
-                //the <h1> element wrapping the header text and edit button
-                function getHeaderDisplay() {
-                    return document.getElementById("header-display");
-                }
+            	var mode = 'display';
+            	
+                var headerDisplay = document.getElementById( 'header-display' );
+                var headerContent = document.getElementById( 'header-content' );
                 
-                //the <span> containing the header text
-                function getHeaderContent() {
-                    return document.getElementById("header-content");
-                }
+                var headerInput = document.createElement('input');
+            	headerInput.setAttribute( 'type', 'text' );
+            	
+            	var controlButton = document.createElement( 'button' );
+            	controlButton.innerHTML = 'Edit';
                 
-                //the button clicked to switch into edit more
-                function getEditHeaderButton() {
-                    return document.getElementById("header-edit-button");
-                }
-                
-                //the <h1> elements contianing the text input and save button
-                function getHeaderEdit() {
-                    return document.getElementById("header-edit");
-                }
-                
-                //the <input> used to used the header text
-                function getHeaderInput() {
-                    return document.getElementById("header-input");
-                }
-                
-                //the button clicked to save changes
-                function getSaveHeaderButton() {
-                    return document.getElementById("header-save-button");
-                }
-                
-                //copies the contents of the display blocl into the input, hides 
-                //the display block, and shows the edit block
-                function editMode() {
-                    var headerText = getHeaderContent().innerHTML;
-                    var headerInput = getHeaderInput();
-                    headerInput.value = headerText;
-                    
-                    getHeaderDisplay().style.display = "none";
-                    getHeaderEdit().style.display = "";
-                }
-                
-                //copies the value of the <input> into the display block,
-                //hides the edit block, and shows the display block
-                function displayMode() {
-                    var headerText = getHeaderInput().value;
-                    var headerContent = getHeaderContent();
-                    headerContent.innerHTML = headerText;
-                    
-                    getHeaderDisplay().style.display = "";
-                    getHeaderEdit().style.display = "none";
+                function changeMode(){
+                	if( mode == 'display' ){
+                	    mode = 'edit';
+                	    controlButton.innerHTML = 'Done';
+                	    headerInput.value = headerContent.innerHTML;
+                	    headerDisplay.replaceChild( headerInput, headerContent );
+                	    headerInput.focus();
+                	    headerInput.select();
+                	}
+                	else{
+                		mode = 'display';
+                		controlButton.innerHTML = 'Edit';
+                		headerContent.innerHTML = headerInput.value;
+                		headerDisplay.replaceChild( headerContent, headerInput );
+                	}
                 }
                 
                 //detects the return key being pressed inside of the <input>
@@ -141,14 +111,15 @@
                     var keyCode = e.keyCode || e.which;
                     if (keyCode == '13'){
                         // Enter pressed
-                        displayMode();
+                        changeMode();
                         return false;
                     }
                 }
                 
-                getEditHeaderButton().onclick = editMode;
-                getSaveHeaderButton().onclick = displayMode;
-                getHeaderInput().onkeypress = inputChanged;
+                headerInput.onkeypress = inputChanged;
+                
+                controlButton.onclick = changeMode;
+                headerDisplay.appendChild( controlButton );
             })();//executing the anonymous function
         </script>
     </body>
